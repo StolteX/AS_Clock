@@ -7,6 +7,6 @@ ModuleBreakpoints2=
 ModuleClosedNodes0=4
 ModuleClosedNodes1=
 ModuleClosedNodes2=1
-NavigationStack=ASClock,Draw,146,6,B4XMainPage,Timer1_Tick,47,2,Visual Designer,frm_main.bil,-100,6,ASClock,DesignerCreateView,76,5,ASClock,Class_Globals,20,6,ASClock,setSweepHands,218,6,ASClock,getSweepHands,218,4,ASClock,getScaleColor,217,4,ASClock,DrawPointer,217,6,ASClock,setScaleColor,220,6
+NavigationStack=B4XMainPage,Timer1_Tick,47,2,ASClock,getSweepHands,218,4,ASClock,getScaleColor,217,4,ASClock,setScaleColor,220,6,ASClock,setSweepHands,240,6,ASClock,DesignerCreateView,104,5,ASClock,DrawPointer,216,6,ASClock,Class_Globals,67,6,Visual Designer,frm_main.bil,-100,6,ASClock,Draw,153,6
 SelectedBuild=0
 VisibleModules=2,1

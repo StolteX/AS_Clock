@@ -9,7 +9,7 @@ Module2=|relative|..\B4XMainPage
 NumberOfFiles=1
 NumberOfLibraries=2
 NumberOfModules=2
-Version=7.8
+Version=8.3
 @EndOfDesignText@
 'Code module
 #Region  Project Attributes 
@@ -20,7 +20,7 @@ Version=7.8
 	#iPadOrientations: Portrait, LandscapeLeft, LandscapeRight, PortraitUpsideDown
 	#Target: iPhone, iPad
 	#ATSEnabled: True
-	#MinVersion: 8
+	#MinVersion: 11
 	#ProvisionFile: Stoltex.mobileprovision
 #End Region
 

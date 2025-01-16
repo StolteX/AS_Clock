@@ -16,6 +16,8 @@ V1.02
 		-Default: 12
 		-If 24 then the clock displays 1-24
 		-If 12 then the clock displays 1-12
+V1.03
+	-Add SleepDuration to ClockMode
 #End If
 
 #DesignerProperty: Key: InnerColor, DisplayName: Inner Color, FieldType: Color, DefaultValue: 0xFF000000
@@ -37,7 +39,7 @@ V1.02
 #DesignerProperty: Key: ShowSecondsHand, DisplayName: Show Seconds Hand, FieldType: Boolean, DefaultValue: True
 #DesignerProperty: Key: SweepHands, DisplayName: Sweep Hands, FieldType: Boolean, DefaultValue: False
 
-#DesignerProperty: Key: ClockMode, DisplayName: Clock Mode, FieldType: String, DefaultValue: 12, List: 12|24
+#DesignerProperty: Key: ClockMode, DisplayName: Clock Mode, FieldType: String, DefaultValue: 12, List: 12|24|SleepDuration
 
 Sub Class_Globals
 	Private mEventName As String 'ignore
@@ -68,7 +70,7 @@ Sub Class_Globals
 	Private mShowMinutesHand As Boolean
 	Private mShowSecondsHand As Boolean
 	Private mSweepHands As Boolean
-	Private mClockMode As Int
+	Private mClockMode As String
 	
 	Private mMiddleText As String
 	Private mHour,mMin,mSec As Int
@@ -131,10 +133,12 @@ Public Sub Draw
 	
 	Dim Clock_Radius As Float = CircleRect.Width / 2 - mCornerWidth
 	
+	Dim ClockMode As Int = IIf(mClockMode <> "SleepDuration",mClockMode,24)
+	
 	'Draw the 12 dots representing the hours
 	Dim midnight = 270 As Int
 	Dim Counter As Int = -1
-	For angle = midnight To (midnight + 360) Step (360 / mClockMode)
+	For angle = midnight To (midnight + 360) Step (360 / ClockMode)
 		Counter = Counter +1
 		Dim x = (CosD(angle) * Clock_Radius * 0.95) + mBase.Width/2 As Float
 		Dim y = (SinD(angle) * Clock_Radius * 0.95) + mBase.Height/2 As Float
@@ -147,30 +151,39 @@ Public Sub Draw
 		
 		If mShowDialText = True Then
 		
-			If Counter < (mClockMode+1) And Counter <> 0 Then
+			If Counter < (ClockMode+1) And Counter <> 0 Then
 				x = (CosD(angle) * Clock_Radius * 0.85) + mBase.Width/2
 				y = (SinD(angle) * Clock_Radius * 0.85) + mBase.Height/2
 		
 				y = y + (MeasureTextHeight(Counter,xui.CreateDefaultBoldFont(12))/4)
-		
-				cv_Clock.DrawText(Counter,x,y,xui.CreateDefaultBoldFont(12),mScaleColor,"CENTER")
+					
+				If Counter = 24 And mClockMode = "SleepDuration" Then
+						cv_Clock.DrawText(0,x,y,xui.CreateDefaultBoldFont(12),mScaleColor,"CENTER")
+				else if mClockMode = "SleepDuration" Then
+					If Counter Mod 3 = 0 Then
+						cv_Clock.DrawText(Counter,x,y,xui.CreateDefaultBoldFont(12),mScaleColor,"CENTER")
+					End If
+				Else
+					cv_Clock.DrawText(Counter,x,y,xui.CreateDefaultBoldFont(12),mScaleColor,"CENTER")
+				End If
+					
 			End If
 			
 		End If
 	Next
 	
 	If mShowMinutesMark = True Then
-	Dim midnight = 270 As Int
-		For angle = midnight To (midnight + 360) Step (360 / IIf(mClockMode = 12,60,120))
-		Dim x = (CosD(angle) * Clock_Radius * 0.98) + mBase.Width/2 As Float
-		Dim y = (SinD(angle) * Clock_Radius * 0.98) + mBase.Height/2 As Float
+		Dim midnight = 270 As Int
+		For angle = midnight To (midnight + 360) Step (360 / IIf(ClockMode = 12,60,120))
+			Dim x = (CosD(angle) * Clock_Radius * 0.98) + mBase.Width/2 As Float
+			Dim y = (SinD(angle) * Clock_Radius * 0.98) + mBase.Height/2 As Float
 			'cv_Clock.DrawCircle(x, y, Clock_Radius * 0.05, xui.Color_Green, True, 0)
 		
-		Dim x2 = (CosD(angle) * Clock_Radius * 1) + mBase.Width/2 As Float
-		Dim y2 = (SinD(angle) * Clock_Radius * 1) + mBase.Height/2 As Float
+			Dim x2 = (CosD(angle) * Clock_Radius * 1) + mBase.Width/2 As Float
+			Dim y2 = (SinD(angle) * Clock_Radius * 1) + mBase.Height/2 As Float
 		
 			cv_Clock.DrawLine(x,y,x2,y2,mScaleColor,2dip)
-	Next
+		Next
 	End If
 	
 	Dim r As B4XRect = cv_Clock.MeasureText(Counter,m_MiddleTextProperties.xFont)
@@ -198,12 +211,14 @@ Private Sub DrawPointer
 	'Mins_Angle = 270 + (mMin * 360 / 60)
 	Secs_Angle = 270 + (mSec * 360 / 60)
  
+	Dim ClockMode As Int = IIf(mClockMode <> "SleepDuration",mClockMode,12)
+ 
 	If mSweepHands = True Then
-		Mins_Angle = 270 + (mMin * 360 / IIf(mClockMode = 12,60,120)) + (Secs_Angle - 270) / 60 'rjg mod
-		Hour_Angle = 270 + (mHour * 360 / mClockMode) + (Mins_Angle - 270) / IIf(mClockMode = 12,60,120)   'rjg mod
+		Mins_Angle = 270 + (mMin * 360 / IIf(ClockMode = 12,60,120)) + (Secs_Angle - 270) / 60 'rjg mod
+		Hour_Angle = 270 + (mHour * 360 / ClockMode) + (Mins_Angle - 270) / IIf(ClockMode = 12,60,120)   'rjg mod
 	Else
 		Mins_Angle = 270 + (mMin * 360 / 60)
-		Hour_Angle = 270 + (mHour * 360 / mClockMode)
+		Hour_Angle = 270 + (mHour * 360 / ClockMode)
 	End If
  
 	Dim Clock_X As Float = mBase.Width/2
